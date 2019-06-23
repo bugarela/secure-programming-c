@@ -1,10 +1,28 @@
 \chapter{Introdução}
 \label{introducao}
 
+Com o crescimento do valor em ativos resguardados por software, existe uma tendência ao crescimento de ataques a esses. Essa tendência valoriza a importância de programadores conhecerem as vulnerabilidades existentes, assim como as estratégias de mitigação adequadas \cite{seacord2005secure}.
+
+Algumas vulnerabilidades de sistemas computacionais são consequências da chamada programação insegura. Programar com segurança significa mitigar as vulnerabilidades produzidas pela execução do código compilado, e necessita de um conhecimento das vulnerabilidades, assim como da linguagem e do compilador, por parte do programador.
+
+Visando centralizar tal conhecimento sobre vulnerabilidades, o padrão CERT C para programação segura foi proposto. Este padrão se aplica para códigos nas linguagens de programação C e C++, e é dividido em regras que especificam procedimentos a serem implementados ou evitados para mitigar vulnerabilidades do código \cite{certhistory}.
+
+As regras apresentadas são classificadas por prioridade, que é formada pelas suas avaliações de severidade, chance de ocorrer e custo de remediação. Nesse trabalho, serão envolvidas apenas as regras classificados no nível de maior prioridade (nível 1).
+
+O padrão CERT C ainda indica que hajam verificações automáticas com auxílio de ferramentas analisadoras de código \cite{ccert}. Essas análises são interessantes durante o processo de desenvolvimento. Com elas, as vulnerabilidades são identificadas o mais cedo possível, permitindo que a correção seja menos custosa e tenha menos impacto no sistema. As ferramentas automáticas ainda permitem uma revisão mais consistente do que a humana, uma vez que não apresenta vícios após ser repetida diversas vezes.
+
+É necessário, contudo, que essas ferramentas sejam capazes de identificar o maior número possível de vulnerabilidades. Para o padrão CERT C, indica-se que seja utilizada a ferramenta que detecta a maior quantidade de não conformidades colocadas no documento \cite{ccert}.
+
+Assim, no momento de escolha de uma ferramenta de análise, é interessante que haja um estudo de sua capacidade de detecção, para que o auxílio provido no processo de desenvolvimento seja relevante, e que a segurança do sistema não seja comprometida por falsos negativos.
+
 \section{Objetivos}
+
+Este trabalho tem como objetivo comparar três ferramentas analisadoras com cógido aberto recomendadas pela OWASP (\textit{Open Web Application Security Project} - Projeto Aberto de Segurança em Aplicações Web) \cite{owaspscat}: Cppcheck, Flawfinder e LGTM; de acordo com sua detecção de não conformidades com as regras de nível 1 do padrão CERT C 2016.
 
 \subsection{Objetivos Específicos}
 \begin{itemize}
-  \item TO DO
-  \item TO DO
+  \item Preparar códigos não conformes parar serem analisados pelas ferramentas.
+  \item Executar as ferramentas analisadoras sobre todos os códigos não conformes.
+  \item Analisar os resultados obtidos a fim de obter uma quantificação por regra.
+  \item Comparar os resultados quantificados entre as ferramentas através de matrizes de confusão.
 \end{itemize}

@@ -1,0 +1,10 @@
+\chapter{Considerações Finais}
+\label{cap:consideracoes}
+
+Na execução deste trabalho, foi possível organizar um diretório com exemplos de códigos não conformes disponibilizados pela CERT C 2016 \cite{ccert}, bem como um projeto onde todos os arquivos fontes são compilados através de um aquivo de construção. Nessa etapa, foi selecionado arbitrariamente um código de exemplo para cada regra, devido a limitações de recursos. Considera-se que seria interessante para este comparativo a inclusão de mais exemplos por regra. No entanto, se houverem números diferentes de exemplos por regra, o método de análise deve ser revisto, já que o utilizado não seria adequado, favorecendo ferramentas que detectam não conformidades de regras com mais exemplos.
+
+Nos experimentos realizados, todas as ferramentas foram executadas com su\-ces\-so. A ferramenta LGTM apresentou maiores dificuldades de configuração por ser no formato de serviço e envolver mais fatores. O formato dos resultados de todas as ferramentas permitiu uma análise equivalente, já que se apresentavam de maneira semelhante. Algumas ferramentas apresentaram alertas para problemas de estilo de código, que foram ignoradas quando não relevantes, uma vez que não fazem parte do escopo deste trabalho.
+
+A quantificação dos resultados foi obtida a partir da análise de códigos não conformes apenas, sem compará-la com uma análise sobre a versão conforme. Isso se dá pelo direcionamento deste trabalho, em alinhamento com as recomendações do padrão CERT C, em buscar pelo maior número de verdadeiros positivos. As matrizes de confusão apresentadas estão de acordo com esse escopo. Considera-se que uma outra comparação possível poderia envolver a minimização de alertas para códigos conformes, o que necessitaria a análise das versões conformes do código.
+
+Concluindo o trabalho, os resultados obtidos se mostraram relevantes ao indicar uma ferramenta com capacidade de detecção de não conformidades com as regras de nível 1 do padrão CERT C 2016 mais satisfatória, com uma diferença notável quando comparada com as demais.

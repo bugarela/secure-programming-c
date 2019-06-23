@@ -228,12 +228,12 @@ INPUT /home/gabriela/Projetos/secure-programming-c/cap/introducao.tex
 INPUT /home/gabriela/Projetos/secure-programming-c/cap/introducao.tex
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/jknappen/ec/ecrm2074.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/jknappen/ec/ecbx2074.tfm
-INPUT /usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
-INPUT /usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
-INPUT /home/gabriela/Projetos/secure-programming-c/cap/capitulo1.tex
-INPUT /home/gabriela/Projetos/secure-programming-c/cap/capitulo1.tex
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/jknappen/ec/ecsl1200.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/jknappen/ec/ecti1200.tfm
+INPUT /usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
+INPUT /usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
+INPUT /home/gabriela/Projetos/secure-programming-c/cap/capitulo1.tex
+INPUT /home/gabriela/Projetos/secure-programming-c/cap/capitulo1.tex
 INPUT /home/gabriela/Projetos/secure-programming-c/cap/capitulo2.tex
 INPUT /home/gabriela/Projetos/secure-programming-c/cap/capitulo2.tex
 INPUT /usr/share/texlive/texmf-dist/tex/latex/psnfss/t1pcr.fd
@@ -302,6 +302,8 @@ INPUT /home/gabriela/Projetos/secure-programming-c/code/MSC33-C.c
 INPUT /home/gabriela/Projetos/secure-programming-c/code/MSC33-C.c
 INPUT /home/gabriela/Projetos/secure-programming-c/cap/capitulo3.tex
 INPUT /home/gabriela/Projetos/secure-programming-c/cap/capitulo3.tex
+INPUT /home/gabriela/Projetos/secure-programming-c/cap/consideracoes.tex
+INPUT /home/gabriela/Projetos/secure-programming-c/cap/consideracoes.tex
 INPUT /home/gabriela/Projetos/secure-programming-c/te.bbl
 INPUT /home/gabriela/Projetos/secure-programming-c/te.bbl
 INPUT /home/gabriela/Projetos/secure-programming-c/te.aux

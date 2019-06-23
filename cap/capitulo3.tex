@@ -31,7 +31,7 @@ Com as informações resultantes da execução da ferramenta, executou-se um pro
 \begin{tabular}{@{}cccc@{}}
 \toprule
 \textbf{Regra} & \multicolumn{3}{c}{\textbf{Detecção (S/N)}} \\
-               & Cppcheck & Flawfinder & LGTM \\ \midrule
+               & Cppcheck & FlawFinder & LGTM \\ \midrule
 EXP33-C        & N        & N          & N    \\ \midrule
 EXP34-C        & N        & N          & N    \\ \midrule
 ARR38-C        & N        & S          & N    \\ \midrule
@@ -84,7 +84,7 @@ Destaca-se a diferenças entre as linhas da matriz de confusão para esse contex
 \textbf{Falha correspondente} & 7                        & 10                                               \\
 \textbf{Restante do código} & 4                        & 13                                               \\ \bottomrule
 \end{tabular}
-\caption{Matriz de confusão para detecção com Flawfinder}
+\caption{Matriz de confusão para detecção com FlawFinder}
 \label{tab:flawfinder}
 \end{table}
 
@@ -99,4 +99,6 @@ Destaca-se a diferenças entre as linhas da matriz de confusão para esse contex
   \label{tab:lgtm}
   \end{table}
 
-  As matrizes de confusão são apresentadas por ferramenta, sendo a matriz para os resultados de Cppcheck dispostos na Tabela \ref{tab:cppcheck}, de FlawFinder na Tabela \ref{tab:flawfinder} e de LGTM na Tabela \ref{tab:lgtm}.
+As matrizes de confusão são apresentadas por ferramenta, sendo a matriz para os resultados de Cppcheck dispostos na Tabela \ref{tab:cppcheck}, de FlawFinder na Tabela \ref{tab:flawfinder} e de LGTM na Tabela \ref{tab:lgtm}.
+
+A partir da observação desses resultados com base no critério proposto pelo padrão \cite{ccert} de quantidade de não conformidades detectadas, a ferramenta FlawFinder se mostra mais adepta para análise de código C/C++ com objetivo de mitigar vulnerabilidades abordadas nas regras de nível 1 do padrão CERT C.
