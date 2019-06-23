@@ -29,8 +29,8 @@
 \usepackage{caption}
 \usepackage{adjustbox}
 \usepackage{floatrow}
-\floatsetup[figure]{capposition=top}
-\floatsetup[table]{capposition=top}
+% \floatsetup[figure]{capposition=top}
+% \floatsetup[table]{capposition=top}
 %\captionsetup{labelsep=endash}
 %\usepackage{rotating}
 %\usepackage{rotfloat}
@@ -45,7 +45,14 @@
 \usepackage{ifthen}
 \usepackage{verbatim}
 \usepackage[nottoc]{tocbibind}
+\usepackage{booktabs}
 % \usepackage{natbib}
+
+\renewcommand{\tablename}{Tabela}
+\renewcommand{\figurename}{Figura}
+\renewcommand{\contentsname}{Conteúdo}
+\renewcommand{\listtablename}{Lista de Tabelas}
+\renewcommand{\listfigurename}{Lista de Figuras}
 
 %-----------------------------------------------------------
 \begin{document}

@@ -1,10 +1,102 @@
 \chapter{Comparativo}
 \label{cap3}
-\section{Analisadores de código}
-\subsection{Cppcheck}
-\subsection{FlawFinder}
-\subsection{LGTM}
+
+Para cada ferramenta a ser comparada, executou-se um processo de testes para detecção de falhas de segurança nos códigos não conformes listados no Capítulo \ref{cap2}. A seguir, serão expostos os resultados obtidos, assim como comparações relevantes.
 
 \section{Método de aplicação da ferramenta}
+
+\subsection{Cppcheck}
+
+A execução dos testes com a ferramenta Cppcheck demanda seu download e instalação, feito a partir da fonte oficial \cite{cppcheck}. Os códigos não conformes foram organizados em um diretório local, e a ferramenta permitiu a verificação a partir do caminho raiz do diretório criado. Assim, uma única execução foi suficiente para obter os resultados com erros apontados para todos os arquivos de código fonte. Cada alerta informa o arquivo e a linha do código potencialmente inseguro.
+
+\subsection{FlawFinder}
+
+O funcionamento da ferramenta FlawFinder proporciona um procedimento semelhante ao feito para o analisador Cppcheck. O formato da saída é equivalente, e ela, da mesma forma, permite a verificação de um diretório. Assim, o mesmo diretório de códigos fonte não conformes foi utilizado. Os preparativos envolvendo download e instalação foram feitas de forma semelhante, a partir da fonte oficial \cite{flawfinder}.
+
+\subsection{LGTM}
+
+A ferramenta LGTM apresentou demandas disparadamente diferentes. Este analisador funciona como um serviço, se conectando como uma aplicação de outros serviços como o GitHub. Assim, se tornou necessário que os códigos analisados estivessem disponíveis em tal serviço.
+
+O serviço LGTM não permite a verificação de um diretório, e sim de um projeto. Isso se torna relevante por duas diferenças de estrutura: A necessidade de um arquivo para construção (\textit{Makefile}) e de remoção de conflitos.
+
+Os exemplos de não conformidade providos pela CERT-C são colocados de maneira isolada. Assim, muitos deles possuem nomes idênticos para funções, e todos implementam uma função \texttt{main}. Esses nomes foram alterados para nomes arbitrários não conflitantes, afim de permitir a compilação do projeto criado. A especificação no arquivo de construção determina que todos os arquivos de código fonte devem ser compilados.
+
+Com o projeto sem conflitos e com arquivo de construção disponível em um repositório do GitHub configurado com a aplicação LGTM, é possível abrir um \textit{Pull Request} e receber uma verificação automática, com os arquivos e linhas correspondentes ao alerta listados na página \textit{web} do serviço.
+
+
 \section{Resultados}
- LGTM só achou MSC33-C.c
+Com as informações resultantes da execução da ferramenta, executou-se um processo de análise para identificar se a falha apontada é relacionada com a determinação da regra imposta pela CERT-C. A Tabela \ref{tab:all} indica quais ferramentas apontaram falhas referentes a quais regras de prioridade 1 - representado com S nas células onde a ferramenta da coluna foi capaz de detectar não conformidade para a regra da linha, e N caso a ferramenta não tenha apontado a falha em questão.
+
+\begin{table}[]
+\begin{tabular}{@{}cccc@{}}
+\toprule
+\textbf{Regra} & \multicolumn{3}{c}{\textbf{Detecção (S/N)}} \\
+               & Cppcheck & Flawfinder & LGTM \\ \midrule
+EXP33-C        & N        & N          & N    \\ \midrule
+EXP34-C        & N        & N          & N    \\ \midrule
+ARR38-C        & N        & S          & N    \\ \midrule
+STR31-C        & S        & S          & N    \\ \midrule
+STR32-C        & N        & S          & N    \\ \midrule
+STR38-C        & N        & S          & N    \\ \midrule
+MEM30-C        & N        & N          & N    \\ \midrule
+MEM34-C        & N        & N          & N    \\ \midrule
+FIO30-C        & N        & S          & N    \\ \midrule
+FIO34-C        & N        & N          & N    \\ \midrule
+FIO37-C        & N        & S          & N    \\ \midrule
+ENV32-C        & N        & N          & N    \\ \midrule
+ENV33-C        & N        & S          & N    \\ \midrule
+SIG30-C        & N        & N          & N    \\ \midrule
+ERR33-C        & N        & N          & N    \\ \midrule
+MSC32-C        & N        & N          & N    \\ \midrule
+MSC33-C        & S        & N          & S    \\ \bottomrule
+\end{tabular}
+\caption{Detecção de conformidade com cada regra por cada ferramenta}
+\label{tab:all}
+\end{table}
+
+Ainda, os resultados foram analisados em busca de falsos positivos. Nesse contexto, um falso positivo é tido como uma falha apontada que não tem uma relação direta com o problema. Em algumas ocasiões, as ferramentas apontam falhas que são consequências indiretas da não conformidade - o que foi considerado um falso positivo com a justificativa de que um programador fazendo correções referentes aos alertas tenderia a resolver o problema errado. Caso o alerta aponte uma situação que, se corrigida, torna o código conforme, ele é considerado uma detecção correta.
+
+Com essa análise, é possível construir matrizes de confusão para as ferramentas. Uma matriz de confusão simples possui quatro quadrantes:
+\begin{itemize}
+  \item Verdadeiro positivo: Falhas detectadas correspondem à não conformidade.
+  \item Falso negativo: A não conformidade não foi apontada como falha.
+  \item Falso positivo: Falhas detectadas não correspondem à não conformidade.
+  \item Verdadeiro negativo: Não foram detectadas falhas não correspondentes.
+\end{itemize}
+
+Destaca-se a diferenças entre as linhas da matriz de confusão para esse contexto: todos os códigos analisados possuem não conformidade com alguma regra, e falsos positivos e verdadeiros negativos correspondem a detecção ou não de falhas não correspondentes com a não conformidade.
+
+\begin{table}[ht]
+  \begin{tabular}{@{}lcc@{}}
+  \toprule
+                      & \textbf{Detecção de falha} & \multicolumn{1}{l}{\textbf{Não deteccção de falha}} \\ \midrule
+  \textbf{Falha correspondente} & 2                        & 15                                               \\
+  \textbf{Restante do código} & 0                        & 17                                               \\ \bottomrule
+  \end{tabular}
+  \caption{Matriz de confusão para detecção com Cppcheck}
+  \label{tab:cppcheck}
+  \end{table}
+
+\begin{table}[ht]
+\begin{tabular}{@{}lcc@{}}
+\toprule
+                    & \textbf{Detecção de falha} & \multicolumn{1}{l}{\textbf{Não deteccção de falha}} \\ \midrule
+\textbf{Falha correspondente} & 7                        & 10                                               \\
+\textbf{Restante do código} & 4                        & 13                                               \\ \bottomrule
+\end{tabular}
+\caption{Matriz de confusão para detecção com Flawfinder}
+\label{tab:flawfinder}
+\end{table}
+
+\begin{table}[ht]
+  \begin{tabular}{@{}lcc@{}}
+  \toprule
+                      & \textbf{Detecção de falha} & \multicolumn{1}{l}{\textbf{Não deteccção de falha}} \\ \midrule
+  \textbf{Falha correspondente} & 1                        & 14                                               \\
+  \textbf{Restante do código} & 0                        & 17                                               \\ \bottomrule
+  \end{tabular}
+  \caption{Matriz de confusão para detecção com LGTM}
+  \label{tab:lgtm}
+  \end{table}
+
+  As matrizes de confusão são apresentadas por ferramenta, sendo a matriz para os resultados de Cppcheck dispostos na Tabela \ref{tab:cppcheck}, de FlawFinder na Tabela \ref{tab:flawfinder} e de LGTM na Tabela \ref{tab:lgtm}.
