@@ -1,0 +1,170 @@
+\NeedsTeXFormat{LaTeX2e}
+
+\documentclass[a4paper,12pt]{pkg/monografia}
+% \usepackage[pdfpagelabels]{hyperref}
+\usepackage{amsmath,amsthm,amsfonts,amssymb}
+\usepackage[mathcal]{eucal}
+\usepackage{latexsym}
+\usepackage[utf8]{inputenc}
+% \usepackage[brazil]{babel}
+%\usepackage{bm}
+\usepackage[alf]{pkg/abntex2cite}
+\usepackage{url}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{placeins}
+%\usepackage{epstopdf}
+\usepackage{multirow}
+%\usepackage{fancyhdr}
+\usepackage[FIGTOPCAP]{subfigure}
+\usepackage{textcase}
+\usepackage{tabularx}
+\usepackage[table,xcdraw]{xcolor}
+% \usepackage{tlatex}
+%\usepackage[portuguese,noend,ruled]{algorithm2e}
+\usepackage{listings}
+\usepackage[T1]{fontenc}
+\usepackage{courier}
+\usepackage[printonlyused]{acronym}
+\usepackage{caption}
+\usepackage{adjustbox}
+\usepackage{floatrow}
+\floatsetup[figure]{capposition=top}
+\floatsetup[table]{capposition=top}
+%\captionsetup{labelsep=endash}
+%\usepackage{rotating}
+%\usepackage{rotfloat}
+%\usepackage{placeins}
+% \usepackage{fontspec}B
+% \setmonofont{Inconsolata}
+%\captionsetup[listing]{position=top}
+\usepackage{makecell}
+\usepackage{listings}
+
+\usepackage{latexsym}
+\usepackage{ifthen}
+\usepackage{verbatim}
+\usepackage[nottoc]{tocbibind}
+% \usepackage{natbib}
+
+%-----------------------------------------------------------
+\begin{document}
+
+%----------------- Título e Dados do Autor -----------------
+\titulo{Estudo comparativo entre 3 analisadores de código C sobre as ameaças de nível 1 do padrão CERT C 2016}
+\autor{André Eduardo Pacheco Dias, Gabriela Moreira Mafra e Lucas Schmitt Seidel}
+\nome{Gabriela Moreira}
+\ultimonome{Mafra}
+
+%---------- Informe o Curso e Grau -------------------------
+\bacharelado \curso{Ciência da Computação} \mes{Março} \ano{2019}
+\data{\today} % Data da aprovação
+\cidade{Joinville}
+
+%---------- Informações sobre a Instituição -----------------
+\instituicao{Universidade do Estado de Santa Catarina}
+\sigla{UDESC} \unidadeacademica{Centro de Ciências Tecnológicas}
+
+%-- Nomes do Orientador, 1o. Examinador e 2o. Examinador ---
+\orientador{Charles Christian Miers}
+% \coorientador{Karina Girardi Rôggia}
+% \examinadorum{Adelaine Gelain}
+% \examinadordois{Paulo Torrens}
+% \examinadortres{}
+
+%-- Títulos do Orientador, 1o. Examinador e 2o. Examinador -
+\ttorientador{Doutor}
+% \ttcoorientador{Doutora}
+% \ttexaminadorum{Mestre}
+% \ttexaminadordois{Mestre}
+% \ttexaminadortres{}
+\input{meta.tex}
+
+
+\lstset{
+    numbers=left,                   % where to put the line-numbers
+    numberstyle=\small \ttfamily \color[rgb]{0.4,0.4,0.4},
+                % style used for the linenumbers
+    showspaces=false,               % show spaces adding special underscores
+    showstringspaces=false,         % underline spaces within strings
+    showtabs=false,                 % show tabs within strings adding particular underscores
+    frame=lines,                    % add a frame around the code
+    tabsize=4,                        % default tabsize: 4 spaces
+    breaklines=true,                % automatic line breaking
+    breakatwhitespace=false,        % automatic breaks should only happen at whitespace
+    basicstyle=\ttfamily,
+    %identifierstyle=\color[rgb]{0.3,0.133,0.133},   % colors in variables and function names, if desired.
+    keywordstyle=\color[rgb]{0.133,0.133,0.6},
+    commentstyle=\color[rgb]{0.133,0.545,0.133},
+    stringstyle=\color[rgb]{0.627,0.126,0.941},
+}
+
+%---------- Capa -------------------------------------------
+\maketitle
+
+%---------- Agradecimentos----------------------------------
+%\agradecimento{Agradecimentos}
+% \input{cap/agradecimentos}
+%\newpage
+
+%---------- Epígrafe ---------------------------------------
+%\begin{epigrafe}
+
+
+
+%\end{epigrafe}
+
+%---------- Resumo -----------------------------------------
+\resumo{Resumo}
+\input{cap/resumo}
+\\
+\noindent \textbf{Palavras-chaves:} Padrão de Código, Programação Segura, Ferramenta de código livre, Analisador de Código, CERT C
+
+%---------- Abstract ---------------------------------------
+\resumo{Abstract}
+\input{cap/abstract}
+\\
+\noindent \textbf{Keywords:} Coding Standard, Secure Programming, Open Source Tool, Code Analyzer, CERT C
+
+%-----------------------------------------------------------
+
+% SUMÁRIO, LISTA DE FIGURAS E LISTA DE TABELAS
+%---------- Sumário ----------------------------------------
+\tableofcontents
+\thispagestyle{empty}
+
+%---------- Lista de figuras -------------------------------
+\listoffigures
+\thispagestyle{empty}
+
+%---------- Lista de tabelas -------------------------------
+\listoftables
+\thispagestyle{empty}
+
+%---------- Lista de Abreviaturas --------------------------
+% \input{cap/acronimos}
+% \thispagestyle{empty}
+
+%---------- Início do Conteúdo -----------------------------
+\pagestyle{ruledheader}
+
+\input{cap/introducao}
+\input{cap/capitulo1}
+\input{cap/capitulo2}
+\input{cap/capitulo3}
+% \input{cap/conclusao}
+
+%\input{cap/agradecimentos}
+
+%---------- Referências ------------------------------------
+\renewcommand{\bibname}{Referências}
+\bibliographystyle{pkg/abnt-alf}
+\nocite{*}
+\bibliography{te}
+
+%---------- Apêndice ---------------------------------------
+%\appendix
+%\include{cap/apendice-publicacoes}
+
+%-----------------------------------------------------------
+\end{document}

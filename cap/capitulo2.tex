@@ -1,0 +1,295 @@
+\chapter{Regras}
+\label{cap2}
+\section{EXP33-C}
+\subsection{Descrição}
+
+A regra EXP33-C diz respeito a não fazer leitura de memória não inicializada. Esse tipo de leitura é problemática porque são retornados valores indeterminados quando é feito acesso de variáveis cujo valor não foi inicializado, conforme previsto pelo padrão C em \cite{ISO-C}.
+
+Variáveis locais, alocadas na pilha de execução, assumem o valor presente na pilha. Variáveis alocadas com os alocadores dinâmicos \texttt{malloc()}, \texttt{aligned\_alloc()} e \texttt{realloc()} não tem valores inicializados, retornando valores indeterminados se alguma leitura for feita sobre eles.
+
+A execução sobre um valor indeterminado pode gerar comportamentos inesperados que são potenciais vulnerabilidades, podendo servir de via para ataques.
+
+\subsection{Código não conforme analisado}
+
+O código analisado para essa regra é um exemplo de não conformidade apresentado na sua especificação em \cite{ccert} e exposto na Figura \ref{fig:EXP33-C}. A não conformidade se encontra na linha 14, onde o \texttt{sign} é desreferenciado e pode não ter sido inicializado, já que a função \texttt{set\_flag()} não atribui nenhum valor a ele se o valor do primeiro parâmetro for 0.
+
+\begin{figure}[h!]
+  \centering
+  \lstinputlisting[language=C]{"code/EXP33-C.c"}
+  \caption{Código não conforme para a regra EXP33-C}
+\label{fig:EXP33-C}
+\end{figure}
+
+\section{EXP34-C}
+\subsection{Descrição}
+
+A regra EXP34-C diz respeito a não desreferenciar ponteiros nulos, isto é, não acessar seus dados. Como ponteiros nulos apontam para uma área indeterminada da memória, desreferenciá-lo retorna valores indeterminados.
+
+Em muitas plataformas, tentar desreferenciar um ponteiro nulo resulta em aborto da execução, mas isso não é um requisito do padrão. Sendo assim, é necessário que haja cuidado por parte do programador para que isso não aconteça.
+
+\subsection{Código não conforme analisado}
+
+O código analisado para essa regra é um exemplo de não conformidade apresentado na sua especificação em \cite{ccert} e exposto na Figura \ref{fig:EXP34-C}. A não conformidade acontece ao desreferenciar \texttt{chunkdata} na linha 5. Como o alocador \texttt{png\_malloc()} da biblioteca png retorna \texttt{NULL} quando recebe o parâmetro de tamanho 0, \texttt{chunkdata} será nulo se \texttt{length} for igual a -1, e tentar escrever em seu endereço resulta em comportamento indeterminado.
+
+\begin{figure}[h!]
+  \centering
+  \lstinputlisting[language=C]{"code/EXP34-C.c"}
+  \caption{Código não conforme para a regra EXP34-C}
+\label{fig:EXP34-C}
+\end{figure}
+
+\section{ARR38-C}
+\subsection{Descrição}
+
+A regra ARR38-C diz respeito a garantir que funções de bibliotecas não formem ponteiros inválidos. Isso é, ao chamar funções de outras bibliotecas que manipulam a memória, é necessário especificar o tamanho correto dos dados a serem manipulados.
+
+O padrão C \cite{ISO-C} define que o comportamento é indeterminado se o vetor passado para uma função de biblioteca não tem todos os endereços válidos e acessíveis. Passar parâmetros incorretos pode resultar em um ponteiro que aponta de forma parcial para o objeto, ou que ultrapassa os seus limites, causando esse tipo de comportamento indeterminado.
+
+\subsection{Código não conforme analisado}
+
+O código analisado para essa regra é um exemplo de não conformidade apresentado na sua especificação em \cite{ccert} e exposto na Figura \ref{fig:ARR38-C}. A não conformidade se encontra na passagem de parâmetros para \texttt{wmemcpy()} na linha 10, onde o contador (terceiro parâmetro) é passado como \texttt{sizeof(w\_str)}, que retorna o tamanho em \textit{bytes}, o que equivale a tamanho de \texttt{char} porém difere de \texttt{wchar\_t}. Assim, o tamanho da memória manipulada pela função será diferente do tamanho do objeto.
+
+\begin{figure}[h!]
+  \centering
+  \lstinputlisting[language=C]{"code/ARR38-C.c"}
+  \caption{Código não conforme para a regra ARR38-C}
+\label{fig:ARR38-C}
+\end{figure}
+
+\section{STR31-C}
+\subsection{Descrição}
+
+A regra STR31-C diz respeito a garantir que o armazenamento para \textit{strings} tem espaço suficiente para os dados em caractere e o terminador nulo (\texttt{'$\backslash$0'}). Copiar mais dados do que o espaço permite resulta em um \textit{buffer overflow}.
+
+Para evitar este problema que causa uma vulnerabilidade, é possível truncar os valores ou, preferencialmente, assegurar-se de que o \textit{buffer} de destino tem espaço suficiente para receber todos os caracteres e o terminador nulo.
+
+\subsection{Código não conforme analisado}
+
+O código analisado para essa regra é um exemplo de não conformidade apresentado na sua especificação em \cite{ccert} e exposto na Figura \ref{fig:STR31-C}. A não conformidade se encontra na linha 9, uma vez que o laço de repetição não considera o terminador nulo e itera sobre todo o vetor alocado. Assim, a atribuição do terminador nulo será feita um \textit{byte} após o fim de \texttt{dest}, causando um \textit{buffer overflow}.
+
+\begin{figure}[h!]
+  \centering
+  \lstinputlisting[language=C]{"code/STR31-C.c"}
+  \caption{Código não conforme para a regra STR31-C}
+\label{fig:STR31-C}
+\end{figure}
+
+\section{STR32-C}
+\subsection{Descrição}
+
+A regra STR32-C diz respeito a não passar uma sequência de caracteres que não terminada por nulo (\texttt{'$\backslash$0'}) para uma função de biblioteca que espera uma \textit{string}. Muitas bibliotecas oferecem funções que aceitam \textit{strings} com a restrição de que elas sejam apropriadamente terminadas com nulo. Passar uma sequência de caracteres que não atende tal restrição para essas funções pode resultar em acesso de memória fora dos limites do objeto, expondo uma vulnerabilidade. O mesmo vale para funções que esperam \textit{wide strings}.
+
+\subsection{Código não conforme analisado}
+
+O código analisado para essa regra é um exemplo de não conformidade apresentado na sua especificação em \cite{ccert} e exposto na Figura \ref{fig:STR32-C}. A não conformidade se encontra na passagem de \texttt{c\_str} para \texttt{printf} na linha 5, uma vez que \texttt{c\_str} não contém o terminador nulo.
+
+\begin{figure}[h!]
+  \centering
+  \lstinputlisting[language=C]{"code/STR32-C.c"}
+  \caption{Código não conforme para a regra STR32-C}
+\label{fig:STR32-C}
+\end{figure}
+
+\section{STR38-C}
+\subsection{Descrição}
+
+A regra STR38-C diz respeito a não confundir \textit{strings} comuns com \textit{wide strings} ao passar argumentos para funções que esperam parâmetros desses tipos. Passar uma \textit{string} para uma função de biblioteca que espera uma \textit{wide string}, assim como o inverso, pode resultar em comportamentos indefinidos e inesperados. Como os dois tipos tem tamanhos diferentes, podem haver problemas de escala. Além disso, \textit{wide strings} tem um terminador nulo diferente e pode conter \textit{bytes} nulos, o que pode ocasionar inconsistências de tamanho se analisado como uma \textit{string} comum.
+
+\subsection{Código não conforme analisado}
+
+O código analisado para essa regra é um exemplo de não conformidade apresentado na sua especificação em \cite{ccert} e exposto na Figura \ref{fig:STR38-C}. A não conformidade se encontra na passagem de parâmetros do tipo \textit{wide string} para a funçãp \texttt{strncpy)()} que espera parâmetros do tipo \textit{string}, na linha 7.
+
+\begin{figure}[h!]
+  \centering
+  \lstinputlisting[language=C]{"code/STR38-C.c"}
+  \caption{Código não conforme para a regra STR38-C}
+\label{fig:STR38-C}
+\end{figure}
+
+\section{MEM30-C}
+\subsection{Descrição}
+
+A regra MEM30-C diz respeito a não acessar memória liberada. Avaliar um ponteiro - o que inclui desreferenciá-lo, usá-lo em uma operação aritmética, fazer \textit{cast} do seu tipo e usá-lo no lado esquerdo de uma atribuição - que já foi liberado com uma função de gerenciamento de memória como \texttt{free()} causa comportamento indefinido. O acesso a esses ponteiros pode resultar em vulnerabilidades.
+
+Após ser liberado, um ponteiro se torna inválido e o espaço de endereço para o qual ele aponta pode ser usado para outros fins. Assim, o resultado de uma leitura pode até parecer válido em um momento, mas mudar inesperadamente no instante seguinte.
+
+\subsection{Código não conforme analisado}
+
+O código analisado para essa regra é um exemplo de não conformidade apresentado na sua especificação em \cite{ccert} e exposto na Figura \ref{fig:MEM30-C}. A não conformidade se encontra em no acesso a \texttt{p->next} na linha 9, uma vez que o passo do laço \texttt{for} é executado após o seu bloco, que está liberando a memória de \texttt{p}. Assim, no momento do acesso, a memória já foi liberada, e seu acesso pode resultar em comportamento indeterminado.
+
+\begin{figure}[h!]
+  \centering
+  \lstinputlisting[language=C]{"code/MEM30-C.c"}
+  \caption{Código não conforme para a regra MEM30-C}
+\label{fig:MEM30-C}
+\end{figure}
+
+\section{MEM34-C}
+\subsection{Descrição}
+
+A regra MEM34-C diz respeito a liberar apenas memória que foi alocada dinamicamente. Liberar outro tipo de memória pode resultar em corrompimento da \textit{heap} e outros erros graves. O comportamento resultante desse tipo de operação é indeterminado.
+
+Funções de liberação de memória como \texttt{free()} só devem ser usadas sobre ponteiros retornados por outras funções de gerenciamento de memória como \texttt{malloc()}, \texttt{calloc()}, \texttt{aligned\_alloc()} e \texttt{realloc()}.
+
+Essa regra não se aplica para ponteiros nulos, uma vez que é garantido pelo padrão C que liberar um ponteiro nulo não causa nenhuma ação.
+
+\subsection{Código não conforme analisado}
+
+O código analisado para essa regra é um exemplo de não conformidade apresentado na sua especificação em \cite{ccert} e exposto na Figura \ref{fig:MEM34-C}. A não conformidade se encontra na chamada de \texttt{free()} para \texttt{c\_str} na linha 31, uma vez que, se \texttt{argc} for diferente de 2, \texttt{c\_str} não é resultado da alocação de memória por algum gerenciador, e então não pode ser liberada com \texttt{free()}.
+
+\begin{figure}[h!]
+  \centering
+  \lstinputlisting[language=C]{"code/MEM34-C.c"}
+  \caption{Código não conforme para a regra MEM34-C}
+\label{fig:MEM34-C}
+\end{figure}
+
+\section{FIO30-C}
+\subsection{Descrição}
+
+A regra FIO30-C diz respeito a excluir entradas de usuário de \textit{strings} de formatação. Em uma avaliação da função \texttt{fprintf()}, a \textit{string} de formatação é avaliada e, se ela conter alguma entrada do usuário, permite que um atacante execute código arbitrário ao passar como entrada uma \textit{string} de formatação. Essa execução terá as mesmas permissões do processo com a vulnerabilidade relacionada a essa regra.
+
+Assim, toda a entrada de usuário deve ser tratada ou utilizada como \textit{string} comum, e nunca diretamente como uma \textit{string} de formatação.
+
+\subsection{Código não conforme analisado}
+
+O código analisado para essa regra é um exemplo de não conformidade apresentado na sua especificação em \cite{ccert} e exposto na Figura \ref{fig:FIO30-C}. A não conformidade se encontra na passagem de \texttt{msg} para \texttt{fprintf()} na linha 24, já que \texttt{msg} é construída com entrada do usuário e está sendo usada como uma \textit{string} de formatação.
+
+\begin{figure}[h!]
+  \centering
+  \lstinputlisting[language=C]{"code/FIO30-C.c"}
+  \caption{Código não conforme para a regra FIO30-C}
+\label{fig:FIO30-C}
+\end{figure}
+
+\section{FIO34-C}
+\subsection{Descrição}
+
+A regra FIO34-C diz respeito à distinção entre caracteres lidos de um arquivo e \texttt{EOF} ou \texttt{WEOF}. Em plataformas onde o tamanho do tipo \texttt{int} é igual ao do tipo \texttt{char}, ao fazer \textit{cast} de tipo de um caractere lido para compará-lo com \texttt{EOF} ou \texttt{WEOF}, pode haver conflito de forma que um caractere válido possa ser igual a representação \texttt{EOF} ou \texttt{WEOF}. Assim, é necessário verificar o término de um arquivo de outra forma como com as funções \texttt{feof()} e \texttt{ferror()}.
+
+\subsection{Código não conforme analisado}
+
+O código analisado para essa regra é um exemplo de não conformidade apresentado na sua especificação em \cite{ccert} e exposto na Figura \ref{fig:FIO34-C}. A não conformidade se encontra na comparação do caractere \texttt{c} com \texttt{EOF} na linha 8, sem outras verificações que assegurem que não é um conflito resultante do \textit{cast} de tipo.
+
+\begin{figure}[h!]
+  \centering
+  \lstinputlisting[language=C]{"code/FIO34-C.c"}
+  \caption{Código não conforme para a regra FIO34-C}
+\label{fig:FIO34-C}
+\end{figure}
+
+\section{FIO37-C}
+\subsection{Descrição}
+
+A regra FIO37-C diz respeito a não assumir que as funções \texttt{fgets()} e \texttt{fgetws()} retornam uma string não vazia quando tem sucesso. Dado que existem teclados capazes de produzir o caractere nulo, assim como a possibilidade de redirecionar a leitura para um arquivo binário (com o operador \textit{pipe} do terminal) contendo o mesmo caractere, não é seguro assumir que uma leitura bem sucedida retorna uma string não vazia. Operações que assumem tal propriedade podem fazer execuções inapropriadas para uma string vazia, resultando em comportamentos inesperados.
+
+\subsection{Código não conforme analisado}
+
+O código analisado para essa regra é um exemplo de não conformidade apresentado na sua especificação em \cite{ccert} e exposto na Figura \ref{fig:FIO37-C}. A não conformidade está na não verificação do conteúdo ou tamanho de \texttt{buf} antes da atribuição feita na linha 14. Caso \texttt{buf} inicie com o terminador nulo, o seu tamanho calculado por \texttt{strlen()} será 0, e a atribuição em um valor positivo alto resultante de \texttt{0 - 1} estará fora dos limites de \texttt{buf}.
+
+\begin{figure}[h!]
+  \centering
+  \lstinputlisting[language=C]{"code/FIO37-C.c"}
+  \caption{Código não conforme para a regra FIO37-C}
+\label{fig:FIO37-C}
+\end{figure}
+
+\section{ENV32-C}
+\subsection{Descrição}
+
+A regra ENV32-C diz respeito a necessidade de todos os manipuladores de saída (\textit{exit handlers}) retornarem normalmente. Uma chamada por \texttt{exit()} dentro de uma função registrada como \texttt{atexit()} causa comportamento indefinido. Assim, é necessário que todas as funções desse tipo terminem com \texttt{return}.
+
+\subsection{Código não conforme analisado}
+
+O código analisado para essa regra é um exemplo de não conformidade apresentado na sua especificação em \cite{ccert} e exposto na Figura \ref{fig:ENV32-C}. A não conformidade se encontra na chamada de \texttt{exit()} na linha 13, fazendo com que a execução do código tenha comportamento indefinido caso a condição \texttt{some\_condition} seja verdadeira.
+
+\begin{figure}[h!]
+  \centering
+  \lstinputlisting[language=C]{"code/ENV32-C.c"}
+  \caption{Código não conforme para a regra ENV32-C}
+\label{fig:ENV32-C}
+\end{figure}
+
+\section{ENV33-C}
+\subsection{Descrição}
+
+A regra ENV33-C diz respeito a não chamar a função \texttt{system()} ou equivalentes. Essa função permite a execução do comando especificado em algum processador de comandos como o shell em sistemas UNIX ou \texttt{cmd.exe} em sistemas Microsoft Windows. Chamadas como essa pode resultar em vulnerabilidades, gerando a possibilidade de execução de comandos de sistema arbitrários.
+
+\subsection{Código não conforme analisado}
+
+O código analisado para essa regra é um exemplo de não conformidade apresentado na sua especificação em \cite{ccert} e exposto na Figura \ref{fig:ENV33-C}. A não conformidade se encontra na chamada de \texttt{system()} na linha 21. A entrada \texttt{input} pode conter comandos maliciosos que serão executados pelo sistema pela vulnerabilidade exposta.
+
+\begin{figure}[h!]
+  \centering
+  \lstinputlisting[language=C]{"code/ENV33-C.c"}
+  \caption{Código não conforme para a regra ENV33-C}
+\label{fig:ENV33-C}
+\end{figure}
+
+\section{SIG30-C}
+\subsection{Descrição}
+
+A regra SIG30-C diz respeito a chamar apenas funções assíncrono-seguras (\textit{asynchronous-safe}) dentro de manipuladores de sinais (\textit{signal handlers}). Estritamente, apenas as funções \texttt{abort()}, \texttt{\_Exit()}, \texttt{quick\_exit()}, e \texttt{signal()} podem ser chamadas dentro de um manipulador de sinal. De forma geral, é necessário consultar uma lista de funções assíncrono-seguras para todas as implementações onde o programa será executado.
+
+\subsection{Código não conforme analisado}
+
+O código analisado para essa regra é um exemplo de não conformidade apresentado na sua especificação em \cite{ccert} e exposto na Figura \ref{fig:SIG30-C}. A não conformidade se encontra nas chamadas \texttt{log\_message()} - que chama \texttt{fputs()} - e \texttt{free()} dentro do manipulador \texttt{handler()}, ambas não assíncrono-seguras.
+
+\begin{figure}[h!]
+  \centering
+  \lstinputlisting[language=C]{"code/SIG30-C.c"}
+  \caption{Código não conforme para a regra SIG30-C}
+\label{fig:SIG30-C}
+\end{figure}
+
+\section{ERR33-C}
+\subsection{Descrição}
+
+A regra ERR33-C diz respeito a detectar e lidar com erros da biblioteca padrão. A maioria das funções da biblioteca padrão retorna um valor específico do tipo esperado em caso de erro, como -1 ou um ponteiro nulo. Não verificar o valor desses retornos, assumindo o sucesso da execução da função, pode levar a comportamentos inesperados. É necessário verificar o retorno pelo valor correspondente a erro de cada função utilizada.
+
+\subsection{Código não conforme analisado}
+
+O código analisado para essa regra é um exemplo de não conformidade apresentado na sua especificação em \cite{ccert} e exposto na Figura \ref{fig:ERR33-C}. A não conformidade se encontra na linha 10, onde o retorno de \texttt{setlocale()} não é verificado. Caso ocorra algum erro nessa execução, a chamada da linha 11 pode ter comportamento inesperado.
+
+\begin{figure}[h!]
+  \centering
+  \lstinputlisting[language=C]{"code/ERR33-C.c"}
+  \caption{Código não conforme para a regra ERR33-C}
+\label{fig:ERR33-C}
+\end{figure}
+
+\section{MSC32-C}
+\subsection{Descrição}
+
+A regra MSC32-C diz respeito a passar sementes apropriadas para geradores de números pseudo-aleatórios
+. Para geradores que podem receber sementes, é necessário que sejam passadas sementes ao inicializá-los, e que essas sementes sejam diferentes em cada execução. Executar o programa passando a mesma semente para o ger
+ador mais de uma vez implica na geração da mesma sequência de números aleatórios, de forma que um atacante possa predizê-los.
+
+
+\subsection{Código não conforme analisado}
+
+O código analisado para essa regra é um exemplo de não conformidade apresentado na sua especificação em \cite{ccert} e exposto na Figura \ref{fig:MSC32-C}. A não conformidade se encontra na linha 8, onde não é passada uma semente para o inicializador do gerador \texttt{random()}, que gerará a mesma sequencia de números em todas as execuções.
+
+\begin{figure}[h!]
+  \centering
+  \lstinputlisting[language=C]{"code/MSC32-C.c"}
+  \caption{Código não conforme para a regra MSC32-C}
+\label{fig:MSC32-C}
+\end{figure}
+
+\section{MSC33-C}
+\subsection{Descrição}
+
+A regra MSC33-C diz respeito a não passar dados inválidos para a função \texttt{asctime()}. O uso dessa função é desencorajado no geral e ela é considerada obsoleta, sendo substituída pela função \texttt{asctime\_s()}. Quando for utilizada, deve receber dados válidos conforme esperado, uma vez que a passagem de algum parâmetro com tamanho maior do que o esperado causará \textit{buffer overflow} na string resultante, já que o tamanho alocado para ela é fixo e não há verificações sobre o formato dos parâmetros.
+
+\subsection{Código não conforme analisado}
+
+O código analisado para essa regra é um exemplo de não conformidade apresentado na sua especificação em \cite{ccert} e exposto na Figura \ref{fig:MSC33-C}. A não conformidade se encontra na chamada de \texttt{asctime()} na linha 4 sem a sanitização dos dados em \texttt{timez
+\_tm}.
+
+\begin{figure}[h!]
+  \centering
+  \lstinputlisting[language=C]{"code/MSC33-C.c"}
+  \caption{Código não conforme para a regra MSC33-C}
+\label{fig:MSC33-C}
+\end{figure}

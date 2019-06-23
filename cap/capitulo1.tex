@@ -1,0 +1,111 @@
+\chapter{Conceitos}
+\label{cap1}
+\section{Definição}
+
+Segundo a RedHat \cite{redhat}, programação segura é um conjunto de tecnologias e boas práticas para tornar software tão seguro e estável quanto possível. Ela engloba conceitos desde criptografia, certificados e identidade federada até recomendações para movimentação de dados sensíveis, acesso a sistemas de arquivos e gerenciamento de memória.
+
+Para definir o que faz um programa seguro, existem padrões de programação segura. Esses padrões estabelecem regras bem definidas para separar código conforme de não conforme. Para isso, os padrões são direcionados a uma linguagem de programação específica, e tratam de potenciais vulnerabilidades que emergem daquela linguagem.
+
+\section{Histórico}
+
+A ideia de um padrão CERT para programação segura surgiu nem um encontro do comitê de padrões C, em 2006 \cite{certhistory}. O padrão C é um documento oficial, porém mais direcionado a desenvolvedores de compiladores e é considerado obscuro pela comunidade de desenvolvedores mais geral. Um padrão de código seguro seria direcionado primariamente a programadores da linguagem C, guidando-os a programar de forma segura na linguagem.
+
+Com essa ideia, foi criada uma \textit{wiki} onde membros da comunidade e do próprio comitê contribuíram para, ao fim de dois anos e meio, a publicação do primeiro padrão de código seguro CERT C na forma de um livro em 2008. A wiki continuou em desenvolvimento, e gerou uma nova publicação em 2014. A última versão foi gerada em 2016, e está disponível em formato PDF.
+
+\section{Padrão CERT C}
+
+O Padrão SEI CERT C, edição 2016 \cite{ccert}, determina regras para programação segura na linguagem de programação C, contendo título, descrição, exemplos de não conformidade de a solução conforme. As regras são propostas com o objetivo de desenvolver sistemas seguros e confiáveis, como por meio da eliminação de comportamentos que podem levar a indefinições do programa, gerando vulnerabilidades exploráveis.
+
+As regras determinadas por esse padrão são estabelecidas necessárias para um software que busca confiança e segurança, porém não são suficientes para tornar um programa confiável e seguro.
+
+\section{Analisadores de código}
+
+Ferramentas de análise de código fonte ou Testes Estáticos de Segurança da Aplicação (SAST - \textit{Static Application Security Testing}) tem como objetivo analisar código fonte ou suas versões compiladas para encontrar falhas de segurança \cite{owaspscat}. É interessante, para o ciclo de desenvolvimento de software, que essas análises possam ser feitas com alta frequência, diminuindo o tempo de feedback e detectando os problemas o quanto antes.
+
+Os analisadores tendem a ser escaláveis, funcionando bem para códigos com muitas linhas, e a trazer informações completas para o programador, como o número da linha do código onde o problema acontece. São úteis para encontrar alguns problemas específicos com alto grau de confiança, como para erros de \textit{Buffer Overflow}.
+
+Muitos problemas de segurança, contudo, não podem ser encontrados de maneira automática e, portanto, não são detectáveis com esse tipo de ferramenta. Os analisadores disponíveis no momento da escrita desse trabalho são capazes de encontrar apenas uma minoria das falhas de segurança em aplicações no geral. As ferramentas ainda tendem a apresentar numerosos falsos positivos.
+
+Apesar das análises feitas por essas ferramentas poderem ser feitas pelo próprio programador, manualmente, a automação do processo permite uma frequência maior de verificações e tende a ser menos suscetível a erros conforme o aumento da frequência de análises.
+
+\section{Ferramentas escolhidas}
+
+\subsection{Cppcheck}
+
+A ferramenta de análise de código C/C++ Cppcheck \cite{cppcheck} busca detectar problemas não identificados por compiladores. Sendo assim, ela não detecta problemas de sintaxe, buscando alertar potenciais vazamentos de memória, alocações sem respectivas desalocações e vice-versa, \textit{buffer overrun}, e outros problemas dessa família.
+
+O objetivo da ferramenta é anular todos os falsos positivos. Sendo assim, há vários problemas que deixam de ser detectados - mas aqueles que são tem uma probabilidade alta de serem problemas reais. Esse objetivo ainda não foi atingido e a ferramenta está em estado de desenvolvimento.
+
+\subsection{FlawFinder}
+
+O FlawFinder \cite{flawfinder} é uma ferramenta que examina código C/C++ e reporta possíveis fragilidades de segurança ordenadas por um nível de vulnerabilidade. O objetivo é permitir uma checagem rápida por potenciais problemas de segurança. Algumas das vantagens apontadas pra essa ferramenta incluem a presença de um relatório amigável e detalhado, assim como a facilidade de instalação e uso.
+
+\subsection{LGTM}
+
+O LGTM \cite{lgtm} é uma plataforma de análise de variantes que checa código em busca de vulnerabilidades. Ela combina uma busca profunda na semântica do código com informações encontradas com ciência de dados para relacionar os resultados mais importantes e mostrar alertas relevantes.
+
+O conceito por trás do funcionamento do LGTM consiste na observação de que os mesmos problemas aparecem repetidas vezes no ciclo de vida de um software e na base de código. Essas repetições podem estar apresentadas em diferentes formas, chamadas variantes. Nesse sentido, sempre que um problema é encontrado, são buscadas variantes dele e vulnerabilidades semelhantes.
+
+\section{Método de aplicação da ferramenta}
+
+Para realizar os testes de detecção se falhas em códigos não conformes, o seguinte procedimento é adotado:
+
+\begin{enumerate}
+  \item Construção de um código funcional mínimo que inclua o exemplo de não conformidade provido na especificação da regra. O código deve incluir o mínimo de estrutura para ser compilado com sucesso.
+  \item Execução de cada ferramenta, tendo como parâmetro o arquivo do código contendo a não conformidade.
+  \item Levantamento de dados sobre o relatório gerado por cada ferramenta. Esse processo deve levar em conta os quatro quadrantes de uma matriz de confusão simples, isso é: quantidade de falsos positivos, falsos negativos, verdadeiros positivos e verdadeiros negativos. Para isso, é considerada que a única vulnerabilidade presente é aquela sendo avaliada.
+\end{enumerate}
+
+\section{Tipos de regras}
+
+O padrão CERT C faz avaliações de risco e custo de remediação para cada guia associado a uma regra e recomendação. Com o uso dessas informações, é definida uma prioridade para cada regra, o que pode ser usado como classificação em análises como a feita neste trabalho.
+
+Em \cite{ccert}, a prioridade é definida com base em três outras avaliações conforme as definições: severidade - quão sérias são as consequências dá regra ser ignorada, conforme a Tabela \ref{table:severidade}; chance - quão provável é que uma falha introduzida por ignorar uma regra leve a uma vulnerabilidade explorável, conforme a Tabela \ref{table:chance}; e custo de remediação - quão custoso é ficar conforme com a regra, conforme a tabela \ref{table:remediacao}.
+
+\begin{table}[!h]
+  \begin{tabular}{l|l|l}
+    Valor & Significado & Exemplos de Vulnerabilidades \\\hline
+    1 & Baixo & Ataque de negação de serviço\\
+    2 & Médio & Violação da integridade dos dados\\
+    3 & Alto & Rodar um código arbitrário\\
+  \end{tabular}
+  \caption{Severidade de uma regra}
+  \label{table:severidade}
+\end{table}
+
+\begin{table}[!h]
+  \begin{tabular}{l|l}
+    Valor & Significado \\\hline
+    1 & Pouco provável\\
+    2 & Provável\\
+    3 & Muito provável\\
+  \end{tabular}
+  \caption{Chance de uma regra}
+  \label{table:chance}
+\end{table}
+
+\begin{table}[!h]
+  \begin{tabular}{l|l|l|l}
+    Valor & Significado & Detecção & Correção \\\hline
+    1 & Alto & Manual & Manual \\
+    2 & Médio & Automático & Manual \\
+    3 & Alto & Automático & Automático \\
+  \end{tabular}
+  \caption{Custo de remediação de uma regra}
+  \label{table:remediacao}
+\end{table}
+
+Os valores dessas três avaliações são múltiplicados para obter a prioridade de uma regra. A Tabela \ref{table:prioriades} traz a classificação das possíveis prioridades em três níveis com possíveis interpretações para seus significados.
+
+\begin{table}[!h]
+  \begin{tabular}{l|l|l}
+    Nível & Prioridades & Possível Interpretação \\\hline
+    L1 & 12, 18, 27 & Alta severidade, muito provável, sem custo de reparo\\
+    L2 & 6, 8, 9 & Média severidade, provável, custo médio de reparo\\
+    L3 & 1, 2, 3, 4 & Baixa severidade, pouco provável, custo alto de reparo\\
+  \end{tabular}
+  \caption{Níveis de prioridades}
+  \label{table:prioriades}
+\end{table}
+
+O comparativo neste trabalho trata estritamente das regras classificadas como L1, ou seja, de prioridade 12, 18 ou 27.
