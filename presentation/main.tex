@@ -1,0 +1,389 @@
+\documentclass{beamer}
+
+% \usepackage{graphicx,hyperref,udesc,url}
+\usepackage{graphicx,udesc,url}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{booktabs}
+\usepackage{gensymb}
+\usepackage{amsmath,amssymb,proof}
+\usepackage{booktabs}
+\usepackage{dirtree}
+\usepackage{listings}
+
+\definecolor{green-hl}{RGB}{54,88,65}
+\newcommand{\hl}[1]{{\color{white}\colorbox{green-hl}{#1}}}
+
+\lstset{
+    numbers=left,                   % where to put the line-numbers
+    numberstyle=\small \ttfamily \color[rgb]{0.4,0.4,0.4},
+                % style used for the linenumbers
+    showspaces=false,               % show spaces adding special underscores
+    showstringspaces=false,         % underline spaces within strings
+    showtabs=false,                 % show tabs within strings adding particular underscores
+    frame=lines,                    % add a frame around the code
+    tabsize=4,                        % default tabsize: 4 spaces
+    breaklines=false,                % automatic line breaking
+    breakatwhitespace=false,        % automatic breaks should only happen at whitespace
+    basicstyle=\ttfamily,
+    %identifierstyle=\color[rgb]{0.3,0.133,0.133},   % colors in variables and function names, if desired.
+    keywordstyle=\color[rgb]{0.133,0.133,0.6},
+    commentstyle=\color[rgb]{0.133,0.545,0.133},
+    stringstyle=\color[rgb]{0.627,0.126,0.941},
+}
+
+\sloppy
+
+\title[Analisadores de código para o padrão CERT C]{Estudo comparativo entre 3 analisadores de código C sobre as
+ameaças de nível 1 do padrão CERT C 2016}
+
+\author[André, Gabriela, Lucas]{
+    André Eduardo Pacheco Dias\smallskip \leavevmode \\
+    {\scriptsize Universidade do Estado de Santa Catarina \\\smallskip
+    \url{andre.dias@msn.com}  \\}
+    \medskip
+    Gabriela Moreira Mafra\\\smallskip
+    {\scriptsize Universidade do Estado de Santa Catarina \\\smallskip
+    \url{gabrielamoreiramafra@gmail.com}  \\ }
+    \medskip
+    Lucas Schmitt Seidel\\\smallskip
+    {\scriptsize Universidade do Estado de Santa Catarina \\\smallskip\vspace{-2mm}
+    \url{lucasschmittseidel@gmail.com}}
+    \vspace{-7mm}
+}
+
+\begin{document}
+  \date{24 de Junho de 2019}
+  \begin{frame}
+      \titlepage
+  \end{frame}
+
+\tableofcontents
+
+\section{Objetivo}
+
+\begin{frame}
+  \frametitle{Programação segura}
+
+  \begin{itemize}
+    \item Prática
+    \item Mitigar vulnerabilidades
+    \begin{itemize}
+      \item Geradas por erros de programação
+    \end{itemize}
+    \item Importância crescente devido ao aumento de ativos resguardados por \textit{software}.
+  \end{itemize}\pause
+
+  \begin{block}{CERT C}
+    Padrão de programação segura em C/C++
+    \begin{itemize}
+      \item Dividido em Regras
+      \item Classifica por prioridade
+      \begin{itemize}
+        \item Grau de severidade
+        \item Probabilidade de exploração
+        \item Custo de remediação
+      \end{itemize}
+    \end{itemize}
+ \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{CERT C}
+  \begin{table}[!h]
+    \hspace*{-16px}
+    \begin{tabular}{@{}lll@{}}
+      Nível & Prioridades & Possível Interpretação \\\toprule
+      L1 & 12, 18, 27 & Alta severidade, muito provável, sem custo de reparo\\
+      L2 & 6, 8, 9 & Média severidade, provável, custo médio de reparo\\
+      L3 & 1, 2, 3, 4 & Baixa severidade, pouco provável, custo alto de reparo\\
+    \end{tabular}
+    \caption{Níveis de prioridades}
+    \label{table:prioriades}
+  \end{table}\pause
+
+  \begin{block}{Escopo}
+    Neste trabalho, foram analisadas apenas as regras de nível 1 (L1). Isso inclui 17 regras.
+ \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Analisadores de código}
+
+  Para evitar falha humana e economizar recurso, é interessante usar um analisador automático para encontrar falhas.\\\medskip
+
+  O padrão CERT C indica que seja usada a ferramenta capaz de detectar o maior número de não conformidades possível.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Objetivo}
+
+  Este trabalho tem como objetivo \hl{comparar} três ferramentas analisadoras com cógido aberto recomendadas pela OWASP: Cppcheck, FlawFinder e LGTM; de acordo com sua \hl{detecção de não conformidades} com as regras de nível 1 do padrão CERT C 2016.
+
+\end{frame}
+
+\section{Analisadores de código}
+
+\begin{frame}
+  \frametitle{Cppcheck}
+
+  \begin{minipage}{0.5\textwidth}\centering
+    \begin{itemize}
+      \item Objetivo de minimizar falsos positivos.
+      \item Disponível para download, é executada sobre um diretório local.
+      \item Aponta falhas de segurança e problemas de estilo de código.
+    \end{itemize}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.4\textwidth}\raggedleft
+
+  \includegraphics[scale=0.33]{img/cppcheck.png}
+
+  \end{minipage}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{FlawFinder}
+
+  \begin{minipage}{0.5\textwidth}\centering
+    \begin{itemize}
+      \item Reporta possíveis fragilidades de segurança ordenadas por um nível de vulnerabilidade.
+      \item Disponível para download, é executada sobre um diretório local.
+      \item Reconhecida pela CWE e
+      \textit{CII Best Practices}.
+    \end{itemize}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.4\textwidth}\raggedleft
+
+  \includegraphics[scale=0.6]{img/flawfinder.png}
+
+  \end{minipage}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{LGTM}
+
+  \begin{minipage}{0.5\textwidth}\centering
+    \begin{itemize}
+      \item Analisa a semântica do código com métodos da ciência de dados.
+      \item Procura por variantes no histórico do projeto.
+      \item Serviço que se conecta como uma aplicação do GitHub.
+      \item Suporta várias linguagens.
+    \end{itemize}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.4\textwidth}\raggedleft
+
+  \includegraphics[scale=0.6]{img/lgtm.png}
+
+  \end{minipage}
+
+\end{frame}
+
+\section{Regras}
+
+\begin{frame}
+  \frametitle{Regras}
+
+  As regras impostas pelo padrão CERT C são definidas com os elementos:
+  \begin{itemize}
+    \item Descrição da prática e explicação das consequências
+    \item Exemplo(s) de código(s) não conforme(s)
+    \item Versão(ões) conforme(s) do(s) mesmo(s)
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Método de aplicação}
+
+  \begin{minipage}{0.5\textwidth}\centering
+    Para cada regra, escolheu-se arbitrariamente um exemplo não conforme para ser analisado.\\\bigskip
+
+  O conjunto de exemplos não conformes foi agrupado em um diretório ou projeto, e enviado à ferramenta de análise.
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.4\textwidth}\raggedright
+
+    \dirtree{%
+    .1 projeto.
+    .2 ARR38-C.c.
+    .2 ENV32-C.c.
+    .2 ENV33-C.c.
+    .2 ERR33-C.c.
+    .2 EXP33-C.c.
+    .2 EXP34-C.c.
+    .2 FIO30-C.c.
+    .2 FIO34-C.c.
+    .2 FIO37-C.c.
+    .2 MEM30-C.c.
+    .2 MEM34-C.c.
+    .2 MSC32-C.c.
+    .2 MSC33-C.c.
+    .2 SIG30-C.c.
+    .2 STR31-C.c.
+    .2 STR32-C.c.
+    .2 STR38-C.c.
+    }
+  \end{minipage}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Exemplo: Regra STR31-C (1/2)}
+  \begin{figure}[h!]
+    \centering
+    \lstinputlisting[language=C]{"code/STR31-C.c"}
+    \caption{Código não conforme para a regra STR31-C}
+  \label{fig:STR31-C}
+  \end{figure}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Exemplo: Regra STR31-C (2/2)}
+  \textbf{\Large Alerta FlawFinder:}\\\medskip
+  STR31-C.c:2:  [2] (buffer) char:
+  Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length.\\\bigskip
+
+  \textbf{\Large Alerta Cppcheck:}\\\medskip
+  [STR31-C.c:5]: (style) Array index 'i' is used before limits check.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Exemplo: Regra FIO30-C (1/2)}
+  \vspace{-4mm}
+  \begin{figure}[h!]
+    \centering
+    \lstinputlisting[language=C]{"code/FIO30-C.c"}
+    \caption{Código não conforme para a regra FIO30-C}
+  \label{fig:FIO30-C}
+  \end{figure}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Exemplo: Regra FIO30-C (2/2)}
+  \textbf{\Large Alerta FlawFinder:}\\\medskip
+  FIO30-C.c:24: [4] (format) fprintf:
+  If format strings can be influenced by an attacker, they can be exploited (CWE-134). Use a constant for the format specification.
+\end{frame}
+
+\section{Resultados e Considerações}
+
+\begin{frame}
+  \frametitle{Não conformidades detectadas por ferramenta (1/2)}
+  \begin{table}[]
+    \begin{tabular}{@{}cccc@{}}
+    \toprule
+    \textbf{Regra} & \multicolumn{3}{c}{\textbf{Detecção (S/N)}} \\
+                   & Cppcheck & FlawFinder & LGTM \\ \midrule
+    EXP33-C        & N        & N          & N    \\ \midrule
+    EXP34-C        & N        & N          & N    \\ \midrule
+    ARR38-C        & N        & S          & N    \\ \midrule
+    STR31-C        & S        & S          & N    \\ \midrule
+    STR32-C        & N        & S          & N    \\ \midrule
+    STR38-C        & N        & S          & N    \\ \midrule
+    MEM30-C        & N        & N          & N    \\ \midrule
+    MEM34-C        & N        & N          & N    \\ \midrule
+    FIO30-C        & N        & S          & N    \\ \bottomrule
+    \end{tabular}
+    \end{table}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Não conformidades detectadas por ferramenta (2/2)}
+  \begin{table}[]
+    \begin{tabular}{@{}cccc@{}}
+    \toprule
+    \textbf{Regra} & \multicolumn{3}{c}{\textbf{Detecção (S/N)}} \\
+                   & Cppcheck & FlawFinder & LGTM \\ \midrule
+    FIO34-C        & N        & N          & N    \\ \midrule
+    FIO37-C        & N        & S          & N    \\ \midrule
+    ENV32-C        & N        & N          & N    \\ \midrule
+    ENV33-C        & N        & S          & N    \\ \midrule
+    SIG30-C        & N        & N          & N    \\ \midrule
+    ERR33-C        & N        & N          & N    \\ \midrule
+    MSC32-C        & N        & N          & N    \\ \midrule
+    MSC33-C        & S        & N          & S    \\ \bottomrule
+    \end{tabular}
+    \end{table}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Matriz de confusão: Cppcheck}
+  \begin{table}[ht]
+    \hspace*{-19px}
+    \begin{tabular}{@{}lcc@{}}
+    \toprule
+                        & \textbf{Detecção de falha} & \multicolumn{1}{l}{\textbf{Não deteccção de falha}} \\ \midrule
+    \textbf{Falha correspondente} & 2                        & 15                                               \\
+    \textbf{Restante do código} & 0                        & 17                                               \\ \bottomrule
+    \end{tabular}
+    \caption{Matriz de confusão para detecção com Cppcheck}
+    \label{tab:cppcheck}
+    \end{table}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Matriz de confusão: FlawFinder}
+  \begin{table}[ht]
+    \hspace*{-19px}
+    \begin{tabular}{@{}lcc@{}}
+    \toprule
+                        & \textbf{Detecção de falha} & \multicolumn{1}{l}{\textbf{Não deteccção de falha}} \\ \midrule
+    \textbf{Falha correspondente} & 7                        & 10                                               \\
+    \textbf{Restante do código} & 4                        & 13                                               \\ \bottomrule
+    \end{tabular}
+    \caption{Matriz de confusão para detecção com FlawFinder}
+    \label{tab:flawfinder}
+    \end{table}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Matriz de confusão: LGTM}
+  \begin{table}[ht]
+    \hspace*{-19px}
+    \begin{tabular}{@{}lcc@{}}
+    \toprule
+                        & \textbf{Detecção de falha} & \multicolumn{1}{l}{\textbf{Não deteccção de falha}} \\ \midrule
+    \textbf{Falha correspondente} & 1                        & 14                                               \\
+    \textbf{Restante do código} & 0                        & 17                                               \\ \bottomrule
+    \end{tabular}
+    \caption{Matriz de confusão para detecção com LGTM}
+    \label{tab:lgtm}
+    \end{table}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Considerações}
+  Verdadeiros positivos e falsos negativos são mais relevantes devido ao critério do padrão CERT C.\\\medskip
+
+  A ferramenta FlawFinder se mostrou mais adepta para análise de código C/C++ com objetivo de mitigar vulnerabilidades abordadas nas regras de nível 1 do padrão CERT C 2016.\pause
+
+  \begin{block}{Limitações}
+    \begin{itemize}
+      \item Foram considerados apenas os códigos não conformes.
+      \item As análises envolveram apenas um dos exemplos de não conformidade.
+    \end{itemize}
+
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{}
+  {\Huge Fim :D}\\\bigskip
+
+  André Eduardo Pacheco Dias\\
+  Gabriela Moreira Mafra\\
+  Lucas Schmitt Seidel
+
+\end{frame}
+
+\end{document}
